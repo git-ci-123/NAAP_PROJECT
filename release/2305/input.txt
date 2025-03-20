@@ -4,5 +4,4 @@
 om-rabbitmq_i2305_r9000_b12
 integration-rabbitmq_i2305_r9000_b12
 [DB]
-qwertyuiop.com
-
+https://github.com/git-ci-123/NAAP_PROJECT.git
