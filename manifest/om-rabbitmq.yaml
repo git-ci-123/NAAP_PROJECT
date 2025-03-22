@@ -1,0 +1,167 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: om-rabbitmq-config
+  namespace: "naap-dev"
+data:
+  enabled_plugins: |
+      [rabbitmq_management,rabbitmq_peer_discovery_k8s,rabbitmq_consistent_hash_exchange,rabbitmq_federation,rabbitmq_federation_management,rabbitmq_shovel,rabbitmq_shovel_management,rabbitmq_stomp].
+  rabbitmq.conf: |
+      cluster_formation.peer_discovery_backend  = rabbit_peer_discovery_k8s
+      cluster_formation.k8s.host = kubernetes.default.svc.cluster.local      
+      cluster_formation.k8s.address_type = hostname      
+      cluster_formation.node_cleanup.interval = 60      
+      cluster_formation.node_cleanup.only_log_warning = false
+      cluster_partition_handling = autoheal
+      queue_master_locator=min-masters
+      loopback_users = none
+      listeners.tcp.default = 5672
+      hipe_compile = false
+      stomp.default_user = nslcif
+      stomp.default_pass = nslcif789#
+      stomp.listeners.tcp.1 = 61613
+      management.tcp.port = 15672
+      management.path_prefix = /om-rabbitmq
+      management.load_definitions = /etc/rabbitmq/definitions.json
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: om-rabbitmq
+  namespace: "naap-dev"
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: om-rabbitmq-peer-discovery-rbac
+  namespace: naap-dev
+rules:
+- apiGroups: [""]
+  resources: ["endpoints"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["create"]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: om-rabbitmq-peer-discovery-rbac
+  namespace: "naap-dev"
+subjects:
+- kind: ServiceAccount
+  name: om-rabbitmq
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: om-rabbitmq-peer-discovery-rbac
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: om-rabbitmq
+  name: om-rabbitmq
+  namespace: "naap-dev"
+spec:
+  ports:
+  - name: http-port
+    port: 8015
+    protocol: TCP
+    targetPort: 15672
+  - name: amqp-port
+    port: 8016
+    protocol: TCP
+    targetPort: 5672
+  - name: stomp
+    port: 61613
+    protocol: TCP
+    targetPort: 61613
+  selector:
+    app: om-rabbitmq
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: om-rabbitmq
+  namespace: "naap-dev"
+spec:
+  serviceName: om-rabbitmq
+  replicas: 1
+  selector:
+    matchLabels:
+      app: om-rabbitmq
+  template:
+    metadata:
+      labels:
+        app: om-rabbitmq
+    spec:
+      serviceAccountName: om-rabbitmq
+      terminationGracePeriodSeconds: 10
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+      - name: rabbitmq-k8s
+        image: g7-registry.excelacom.in/public-image/rabbitmq:rabbitmq
+        volumeMounts:
+          - name: config-volume
+            mountPath: /etc/rabbitmq
+          - mountPath: /etc/definitions.json
+            subPath: definitions.json
+            name: rabbitmq-definitions
+        ports:
+          - name: http
+            protocol: TCP
+            containerPort: 15672
+          - name: amqp
+            protocol: TCP
+            containerPort: 5672
+          - name: stomp
+            protocol: TCP
+            containerPort: 61613
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "2Gi"
+            cpu: "1"
+        imagePullPolicy: Always
+        env:
+          - name: MY_POD_NAME
+            valueFrom:
+              fieldRef:
+                apiVersion: v1
+                fieldPath: metadata.name
+          - name: MY_POD_NAMESPACE
+            valueFrom:
+              fieldRef:
+                fieldPath: metadata.namespace
+          - name: RABBITMQ_USE_LONGNAME
+            value: "true"
+          - name: K8S_SERVICE_NAME
+            value: om-rabbitmq
+          - name: RABBITMQ_NODENAME
+            value: rabbit@$(MY_POD_NAME).$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+          - name: K8S_HOSTNAME_SUFFIX
+            value: .$(K8S_SERVICE_NAME).$(MY_POD_NAMESPACE).svc.cluster.local
+          - name: RABBITMQ_ERLANG_COOKIE
+            value: "mycookie"
+          - name: RABBITMQ_DEFAULT_USER
+            value: "integration"
+          - name: RABBITMQ_DEFAULT_PASS
+            value: "integration#"
+      volumes:
+        - name: config-volume
+          configMap:
+            name: om-rabbitmq-config
+            items:
+            - key: rabbitmq.conf
+              path: rabbitmq.conf
+            - key: enabled_plugins
+              path: enabled_plugins
+        - name: rabbitmq-definitions
+          secret:
+            secretName: rabbitmq-definitions
