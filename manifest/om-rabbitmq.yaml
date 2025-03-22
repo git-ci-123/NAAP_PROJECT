@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: om-rabbitmq-config
-  namespace: "naap-dev"
+  namespace: "default"
 data:
   enabled_plugins: |
       [rabbitmq_management,rabbitmq_peer_discovery_k8s,rabbitmq_consistent_hash_exchange,rabbitmq_federation,rabbitmq_federation_management,rabbitmq_shovel,rabbitmq_shovel_management,rabbitmq_stomp].
@@ -29,13 +29,13 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: om-rabbitmq
-  namespace: "naap-dev"
+  namespace: "defaultv"
 ---
 kind: Role
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: om-rabbitmq-peer-discovery-rbac
-  namespace: naap-dev
+  namespace: default
 rules:
 - apiGroups: [""]
   resources: ["endpoints"]
@@ -48,7 +48,7 @@ kind: RoleBinding
 apiVersion: rbac.authorization.k8s.io/v1
 metadata:
   name: om-rabbitmq-peer-discovery-rbac
-  namespace: "naap-dev"
+  namespace: "default"
 subjects:
 - kind: ServiceAccount
   name: om-rabbitmq
@@ -63,15 +63,15 @@ metadata:
   labels:
     app: om-rabbitmq
   name: om-rabbitmq
-  namespace: "naap-dev"
+  namespace: "default"
 spec:
   ports:
   - name: http-port
-    port: 8015
+    port: 8017
     protocol: TCP
     targetPort: 15672
   - name: amqp-port
-    port: 8016
+    port: 8018
     protocol: TCP
     targetPort: 5672
   - name: stomp
@@ -86,7 +86,7 @@ apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: om-rabbitmq
-  namespace: "naap-dev"
+  namespace: "default"
 spec:
   serviceName: om-rabbitmq
   replicas: 1
