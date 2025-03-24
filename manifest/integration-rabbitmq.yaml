@@ -104,7 +104,7 @@ spec:
         kubernetes.io/os: linux
       containers:
       - name: rabbitmq-k8s
-        image: g7-registry.excelacom.in/public-image/rabbitmq:rabbitmq
+        image: 195275668184.dkr.ecr.us-east-2.amazonaws.com/naap:integration-rabbitmq-0
         volumeMounts:
           - name: config-volume
             mountPath: /etc/rabbitmq
