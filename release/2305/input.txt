@@ -1,7 +1,6 @@
 [ITERATION]
 2305 
 [IMAGETAG] 
-om-rabbitmq_i2305_r9000_b12
-integration-rabbitmq_i2305_r9000_b12
+integration-rabbitmq-0
 [DB]
 text
