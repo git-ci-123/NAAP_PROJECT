@@ -1,5 +1,5 @@
 [ITERATION]
 2405 
 [DB]
-qwertyuiop.com
+integration-rabbitmq-0
 
