@@ -1,5 +1,4 @@
 [ITERATION]
 2405 
 [DB]
-integration-rabbitmq-0
-
+test
