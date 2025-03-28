@@ -1,1 +1,1 @@
-CREATE TABLE employees (employee_id INT PRIMARY KEY,first_name VARCHAR(50),last_name VARCHAR(50),email VARCHAR(100) UNIQUE,phone_number VARCHAR(20),hire_date DATE NOT NULL,job_id VARCHAR(10),salary DECIMAL(10,2),department_id INT);
+CREATE TABLE employe (employee_id NUMBER(10) PRIMARY KEY,first_name VARCHAR2(50),last_name VARCHAR2(50),email VARCHAR2(100),phone_number VARCHAR2(20),hire_date DATE NOT NULL,job_id VARCHAR2(10),salary NUMBER(10, 2),department_id NUMBER(10));
