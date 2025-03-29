@@ -1,15 +1,11 @@
 -- Create a test table
 CREATE TABLE TEST_TABLE (
-    ID NUMBER PRIMARY KEY,
+    ID NUMBER(10) PRIMARY KEY,
     NAME VARCHAR2(50) NOT NULL
 );
 
--- Create a test sequence
-CREATE SEQUENCE TEST_SEQ
-    MINVALUE 1
-    MAXVALUE 9999999999
-    INCREMENT BY 1
-    START WITH 1
-    CACHE 20
-    NOORDER
-    NOCYCLE;
+-- Insert a test row
+INSERT INTO TEST_TABLE (ID, NAME) VALUES (1, 'Test Name');
+
+-- Commit the transaction
+COMMIT;
