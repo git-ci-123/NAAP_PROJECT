@@ -1,2 +1,2 @@
 [IMAGETAG] 
-integration-rabbitmq_i2305_r9000_b12000
+integration-rabbitmq_i2305_r9000_b143
