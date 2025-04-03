@@ -1,5 +1,5 @@
 --liquibase formatted sql
---changeset Vijaysree.S:BACATALOG_DDL_01 splitStatements:true
+--changeset Vijaysree.S:APPCATALOG_DDL_01 splitStatements:true
 --preconditions onFail:HALT onError:HALT
 
 CREATE SEQUENCE  REF_TYPE_ID_SEQ  MINVALUE 1000 MAXVALUE 999999999999999999999999999 INCREMENT BY 1 START WITH 180021358893736 CACHE 20 NOORDER  NOCYCLE ;
