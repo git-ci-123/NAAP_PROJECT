@@ -1,0 +1,7 @@
+--liquibase formatted sql
+--changeset Swetha.H:CRDM_DDL_04 splitStatements:true
+--preconditions onFail:HALT onError:HALT
+
+ CREATE INDEX INDX_ZIPCODE ON ZIPCODE_SYSPRIN (ZIPCODE);
+
+CREATE INDEX REFERENCE_TYPE_VALUES_IDX ON REFERENCE_TYPE_VALUES (REF_VALUE, REF_TYPE_ID);
