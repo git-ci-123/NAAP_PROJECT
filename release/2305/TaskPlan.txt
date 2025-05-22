@@ -1,4 +1,3 @@
-[IMAGETAG] 
 [DB]
 [PROPERTY]
 businessapp-service.properties
