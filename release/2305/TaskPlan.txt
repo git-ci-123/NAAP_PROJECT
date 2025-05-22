@@ -1,3 +1,5 @@
+[IMAGE
 [DB]
+text
 [PROPERTY]
 businessapp-service.properties
