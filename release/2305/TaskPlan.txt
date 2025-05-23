@@ -1,4 +1,6 @@
-[IMAGE
+[IMAGE]
+integration-rabbitmq_i0525_r9000_b1
+integration-rabbitmq_i2305_r9000_b2
 [DB]
 text
 [PROPERTY]
