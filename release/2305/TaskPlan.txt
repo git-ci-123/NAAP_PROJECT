@@ -5,4 +5,3 @@ om-rabbitmq_i2305_r9000_b2
 text
 [PROPERTY]
 businessapp-service.properties
-businessappui-service.properties
