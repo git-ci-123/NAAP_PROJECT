@@ -1,4 +1,4 @@
-[IMAGE]
+[IMAGETAG]
 integration-rabbitmq_i0525_r9000_b1
 om-rabbitmq_i2305_r9000_b2
 [DB]
